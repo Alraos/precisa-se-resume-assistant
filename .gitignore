@@ -1,0 +1,15 @@
+# 1. Bloqueia absolutamente tudo no diretório
+/*
+
+# 2. Abre exceções apenas para a inteligência (Documentos)
+!docs/
+!README.md
+!CONTRIBUTING.md
+!LICENSE
+!.gitignore
+
+# 3. Garante que nada dentro de src ou public suba, mesmo que forçado
+/src
+/public
+/node_modules
+.env

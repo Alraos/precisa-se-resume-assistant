@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#137fec">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/p-icon-192.png">
+    
+    <title>Meu Painel | PRECISA-SE</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/assets/css/global.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800 antialiased pb-24">
+
+    <div id="app-header"></div>
+
+    <main class="max-w-3xl mx-auto px-4 py-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-2xl font-black text-gray-900 tracking-tight">Meus Anúncios</h1>
+                <p class="text-gray-500 text-sm mt-1">Gerencie desempenho e renove publicações.</p>
+            </div>
+            
+            <button id="btn-new-post" class="bg-brand hover:bg-brand-dark text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-brand/20 transition-all active:scale-95 flex items-center gap-2 w-full md:w-auto justify-center uppercase tracking-wider text-xs">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                Criar Novo Anúncio
+            </button>
+        </div>
+
+        <div id="dashboard-status" class="hidden mb-6 p-4 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold border border-blue-100 animate-fade-in flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4"></i>
+            <span></span>
+        </div>
+
+        <div id="rep-drafts-section" class="hidden mb-8 animate-fade-in">
+            <div class="flex items-center justify-between mb-4 px-2">
+                <h2 class="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                    <i data-lucide="link" class="w-4 h-4"></i> Links de Aprovação Pendentes
+                </h2>
+                <span id="rep-drafts-count" class="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-1 rounded border border-amber-200">
+                    0
+                </span>
+            </div>
+            <div id="rep-drafts-list" class="space-y-3">
+                <p class="text-center text-xs text-gray-400 py-4">Nenhum link pendente.</p>
+            </div>
+        </div>
+
+        <div id="rep-claimed-section" class="hidden mb-8 animate-fade-in">
+            <div class="flex items-center justify-between mb-4 px-2">
+                <h2 class="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                    <i data-lucide="check-check" class="w-4 h-4 text-green-500"></i> Anúncios Reivindicados
+                </h2>
+                <span id="rep-claimed-count" class="text-[10px] font-bold bg-green-100 text-green-800 px-2 py-1 rounded border border-green-200">
+                    0
+                </span>
+            </div>
+            <div id="rep-claimed-list" class="space-y-3">
+                <p class="text-center text-xs text-gray-400 py-4">Nenhum anúncio reivindicado recentemente.</p>
+            </div>
+        </div>
+
+        <div id="community-pending-section" class="hidden mb-8 animate-fade-in">
+            <div class="flex items-center justify-between mb-4 px-2">
+                <h2 class="text-sm font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                    <i data-lucide="users" class="w-4 h-4"></i> Pendentes da Comunidade
+                </h2>
+                <span id="community-pending-count" class="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded border border-blue-200">
+                    0
+                </span>
+            </div>
+            <div id="community-pending-list" class="space-y-3">
+                <p class="text-center text-xs text-gray-400 py-4">Nenhum anúncio da comunidade aguardando aprovação.</p>
+            </div>
+        </div>
+
+        <div id="dashboard-list" class="space-y-6">
+            <div class="animate-pulse space-y-6">
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm h-64">
+                    <div class="flex gap-4">
+                        <div class="w-16 h-16 bg-gray-200 rounded-lg shrink-0"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div class="h-3 bg-gray-200 rounded w-1/4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <button id="btn-logout" class="text-red-500 hover:text-red-700 text-xs font-bold uppercase tracking-widest transition-colors px-4 py-2 opacity-60 hover:opacity-100">
+                Sair da conta
+            </button>
+        </div>
+
+    </main>
+
+    <template id="tpl-empty-dashboard">
+        <div class="text-center py-16 bg-white rounded-3xl shadow-sm border border-gray-100 animate-fade-in px-6">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="layout-grid" class="w-10 h-10 text-gray-300"></i>
+            </div>
+            <h3 class="text-xl font-black text-gray-900 mb-2">Nenhum anúncio ativo</h3>
+            <p class="text-gray-500 text-sm mb-8 max-w-xs mx-auto leading-relaxed">
+                Você ainda não tem publicações. Comece agora e alcance mais clientes no seu bairro.
+            </p>
+        </div>
+    </template>
+
+    <template id="tpl-post-card">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden transition-all hover:shadow-md group mb-6">
+            
+            <div class="p-5 border-b border-gray-50 flex gap-4 items-start">
+                <div class="w-16 h-16 bg-gray-100 rounded-xl bg-cover bg-center shrink-0 border border-gray-200" data-slot="img"></div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-start gap-2">
+                        <h3 class="font-bold text-gray-900 truncate text-lg leading-tight" data-slot="title">Título</h3>
+                        <span class="text-[10px] font-black px-2 py-1 rounded-md bg-green-100 text-green-700 uppercase tracking-wider shrink-0" data-slot="status-badge">Ativo</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1 flex items-center gap-1 font-medium">
+                        <i data-lucide="calendar-clock" class="w-3 h-3"></i>
+                        Expira: <span data-slot="expires">--/--</span>
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-4 mt-3 pt-2">
+                        <a data-slot="btn-edit" class="text-xs font-bold text-gray-500 hover:text-brand flex items-center gap-1 transition-colors">
+                            <i data-lucide="edit-2" class="w-3 h-3"></i> Editar
+                        </a>
+                        <a data-slot="btn-poster" target="_blank" class="text-xs font-bold text-gray-500 hover:text-brand flex items-center gap-1 transition-colors">
+                            <i data-lucide="printer" class="w-3 h-3"></i> Imprimir Cartaz
+                        </a>
+                        <button data-slot="btn-toggle" class="text-xs font-bold text-gray-500 hover:text-brand flex items-center gap-1 transition-colors ml-auto">
+                            <i data-lucide="power" class="w-3 h-3"></i> <span data-slot="txt-toggle">Pausar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-5 bg-slate-50/30">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <!-- Card 1: Acessos -->
+                    <div class="bi-card">
+                        <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                            <h4 class="text-[10px] font-bold uppercase tracking-widest">Acessos</h4>
+                        </div>
+                        <div class="text-4xl font-black text-gray-900 dark:text-white leading-none mt-2" data-slot="metric-acessos">0</div>
+                        <div class="mt-3 space-y-1 text-xs text-gray-500 dark:text-gray-400 w-full font-medium">
+                            <div class="flex justify-between"><span>Cartaz (QR)</span> <strong data-slot="drilldown-acesso-fisico">0</strong></div>
+                            <div class="flex justify-between"><span>Digital</span> <strong data-slot="drilldown-acesso-digital">0</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Interesse -->
+                    <div class="bi-card">
+                        <div class="flex items-center gap-2 text-brand">
+                            <i data-lucide="mouse-pointer-2" class="w-4 h-4"></i>
+                            <h4 class="text-[10px] font-bold uppercase tracking-widest">Interesse</h4>
+                        </div>
+                        <div class="text-4xl font-black text-brand leading-none mt-2" data-slot="metric-interesse">0</div>
+                        <div class="mt-3 space-y-1 text-xs text-gray-500 dark:text-gray-400 w-full font-medium">
+                            <div class="flex justify-between"><span>Mapa</span> <strong data-slot="drilldown-interesse-mapa">0</strong></div>
+                            <div class="flex justify-between"><span>Site/Social</span> <strong data-slot="drilldown-interesse-web">0</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Contato -->
+                    <div class="bi-card">
+                        <div class="flex items-center gap-2 text-green-600">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <h4 class="text-[10px] font-bold uppercase tracking-widest">Contato</h4>
+                        </div>
+                        <div class="text-4xl font-black text-green-600 leading-none mt-2" data-slot="metric-contato">0</div>
+                        <div class="mt-3 space-y-1 text-xs text-gray-500 dark:text-gray-400 w-full font-medium">
+                            <div class="flex justify-between"><span>WhatsApp</span> <strong data-slot="drilldown-contato-whatsapp">0</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-3 h-3"></i> Desempenho (7 Dias)
+                    </h4>
+                    <div class="h-32 w-full relative bg-white rounded-xl border border-gray-100 p-2">
+                        <canvas data-slot="chart-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center hidden" data-slot="box-renew">
+                    <span class="text-xs text-red-500 font-bold flex items-center gap-1 uppercase tracking-wider">
+                        <i data-lucide="alert-circle" class="w-3 h-3"></i> Expirado
+                    </span>
+                    <button data-slot="btn-renew" class="text-xs bg-brand text-white px-4 py-2 rounded-lg font-bold hover:bg-brand-dark transition-colors shadow-lg shadow-brand/20 uppercase tracking-wider">
+                        Renovar Grátis
+                    </button>
+                </div>
+
+                <div class="hidden mt-4 pt-4 border-t border-gray-200 flex justify-between items-center" data-slot="box-approve">
+                    <span class="text-xs text-amber-600 font-bold flex items-center gap-1 uppercase tracking-wider">
+                        <i data-lucide="shield-question" class="w-3 h-3"></i> Em Análise
+                    </span>
+                    <button data-slot="btn-approve" class="text-xs bg-green-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20 uppercase tracking-wider">
+                        Aprovar Anúncio
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-rep-draft-item">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center justify-between gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="font-bold text-gray-900 dark:text-white truncate draft-title">Título do Rascunho</p>
+                <p class="text-[10px] text-gray-400 font-medium">
+                    Expira em: <span class="draft-expires font-semibold">--</span>
+                </p>
+            </div>
+            <div class="shrink-0 flex items-center gap-1">
+                <button data-action="delete-draft" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition" title="Excluir Rascunho">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+                <button data-action="edit-draft" class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-95 flex items-center gap-2">
+                    <i data-lucide="edit-2" class="w-3 h-3"></i>
+                    Editar
+                </button>
+                <button data-action="copy-draft-link" class="bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-95 flex items-center gap-2">
+                    <i data-lucide="copy" class="w-3 h-3"></i>
+                    Copiar Link
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-rep-claimed-item">
+        <a href="#" class="claimed-link-item block bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center justify-between gap-4 hover:border-green-200 dark:hover:border-green-800 hover:bg-green-50/50 dark:hover:bg-green-900/10 transition-colors">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+                <div class="w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-green-500 shrink-0">
+                    <i data-lucide="check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-900 dark:text-white truncate claimed-title">Título do Anúncio</p>
+                    <p class="text-[10px] text-gray-400 font-medium">
+                        Reivindicado em: <span class="claimed-date font-semibold">--/--/----</span>
+                    </p>
+                </div>
+            </div>
+            <div class="shrink-0 text-green-600">
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </div>
+        </a>
+    </template>
+
+    <template id="tpl-community-pending-item">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center justify-between gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="font-bold text-gray-900 dark:text-white truncate item-title">Título do Anúncio</p>
+                <p class="text-[10px] text-gray-400 font-medium">
+                    <span class="item-neighborhood">Bairro</span> - <span class="item-date">--/--/----</span>
+                </p>
+            </div>
+            <div class="shrink-0 flex items-center gap-2">
+                <a data-action="view" target="_blank" class="text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-2 rounded-lg transition" title="Ver Anúncio">
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                </a>
+                <button data-action="approve" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all active:scale-95 flex items-center gap-2">
+                    <i data-lucide="check" class="w-3 h-3"></i> Aprovar
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template id="tpl-modal-location"><div id="ps-modal-location" class="hidden"></div></template>
+    <template id="tpl-modal-share"><div id="ps-modal-share" class="hidden"></div></template>
+    
+    <template id="tpl-app-header">
+        <nav class="bg-white/95 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 transition-all duration-300">
+            <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+                <a data-slot="home-brand" href="/index.html" class="flex items-center gap-2 group hidden">
+                    <img src="/p-icon-192.png" alt="Logo PRECISA-SE" class="w-10 h-10 object-contain rounded-lg group-hover:scale-105 transition-transform" />
+                </a>
+                <div data-slot="post-brand" class="flex flex-col justify-center leading-none select-none hidden">
+                    <span class="font-black text-lg tracking-tighter text-blue-600">PRECISA-SE</span>
+                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Nova Publicação</span>
+                </div>
+                <div class="flex items-center gap-1 md:gap-2 flex-1 justify-end min-w-0">
+                    <button type="button" data-action="open-location" class="hidden flex-1 min-w-0 flex items-center justify-start gap-2 bg-transparent hover:bg-gray-50 border border-transparent hover:border-gray-100 px-2 py-1 rounded-lg transition mx-2 md:ml-0 md:flex-none max-w-[200px]">
+                        <div class="bg-blue-50 text-blue-600 p-1.5 rounded-full shrink-0">
+                            <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        </div>
+                        <div class="flex flex-col items-start overflow-hidden text-left">
+                            <span class="text-xs font-bold text-gray-900 truncate w-full flex items-center gap-1 leading-none mb-0.5">
+                                <span id="loc-line-1">Carregando...</span>
+                                <i data-lucide="chevron-down" class="w-3 h-3 text-blue-500 opacity-70"></i>
+                            </span>
+                            <span id="loc-line-2" class="text-[10px] font-medium text-gray-400 truncate w-full leading-none">Definir Local</span>
+                        </div>
+                    </button>
+                    <button type="button" data-action="open-share" class="hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-600 shrink-0" aria-label="Compartilhar">
+                        <i data-lucide="share-2" class="w-5 h-5"></i>
+                    </button>
+                    <div data-slot="post-user-info" class="hidden text-right block"> 
+                        <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Responsável</p>
+                        <p id="header-post-user" class="text-xs font-bold text-gray-900 truncate">...</p>
+                    </div>
+                    <div data-slot="post-divider" class="hidden h-8 w-px bg-gray-200 mx-1"></div>
+                    <button data-slot="post-close" onclick="confirmExit()" class="hidden w-10 h-10 rounded-full bg-gray-50 hover:bg-red-50 hover:text-red-500 flex items-center justify-center text-gray-500 transition-colors" title="Cancelar">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                    <div id="header-user-area" class="shrink-0 flex items-center ml-2"></div>
+                </div>
+            </div>
+        </nav>
+    </template>
+
+    <script type="module" src="/src/pages/dashboard/dashboard.init.js"></script>
+</body>
+
+</html>
