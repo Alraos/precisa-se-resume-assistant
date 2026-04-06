@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente de Currículo Digital | PRECISA-SE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chat-container {
+            /* Permite o preenchimento correto limitando na altura da janela em mobile */
+            height: calc(100dvh - 150px); 
+        }
+        /* Scrollbar styles para manter a UI elegante */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-gray-50 flex flex-col h-[100dvh] text-gray-800 font-sans overflow-hidden">
+    
+    <!-- Cabeçalho -->
+    <header class="bg-white shadow-sm border-b px-4 py-4 flex items-center shrink-0 h-[70px]">
+        <h1 class="text-xl font-bold tracking-tight text-indigo-600">PRECISA-SE</h1>
+        <span class="ml-2 text-xs md:text-sm text-gray-500 hidden sm:inline-block">- O que te ajudaria hoje?</span>
+    </header>
+
+    <!-- Área de Chat -->
+    <main id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 chat-container">
+        <!-- As mensagens são injetadas dinamicamente aqui pelo assistant.js -->
+    </main>
+
+    <!-- Área de Input -->
+    <footer class="bg-white p-3 border-t border-gray-200 shrink-0 h-[80px] flex items-center justify-center shadow-lg">
+        <form id="chat-form" class="flex gap-2 w-full max-w-4xl mx-auto items-center">
+            <input 
+                type="text" 
+                id="input-pessoa" 
+                class="flex-1 border border-gray-300 rounded-full px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all shadow-sm"
+                placeholder="Escreva a sua mensagem..."
+                autocomplete="off"
+            >
+            <button 
+                type="submit" 
+                id="btn-enviar-pessoa"
+                class="bg-indigo-600 text-white rounded-full p-3 w-12 h-12 flex items-center justify-center hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 flex-shrink-0 shadow-md"
+            >
+                <!-- Ícone de envio -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                </svg>
+            </button>
+        </form>
+    </footer>
+
+    <!-- Scripts de Lógica Integrada -->
+    <script type="module" src="./assistant.js"></script>
+</body>
+</html>
